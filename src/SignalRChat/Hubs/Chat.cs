@@ -29,7 +29,7 @@ namespace SignalRChat.Hubs
 
             await base.OnConnectedAsync();
         }
-
+        
         public override async Task OnDisconnectedAsync(Exception exception)
         {
             var result = await presenceTracker.ConnectionClosed(Context.User.Identity.Name);

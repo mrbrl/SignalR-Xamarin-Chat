@@ -6,12 +6,12 @@ using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 
-namespace SignalRChatClient
+namespace SignalRChat.ConsoleApp
 {
     class Program
     {
         static readonly HttpClient httpClient = new HttpClient();
-        static readonly string baseUrl = "http://localhost:5000";
+        static readonly string baseUrl = "http://localhost:3528";
         static async Task Main(string[] args)
         {
             Console.Write("Username: ");
@@ -57,7 +57,6 @@ namespace SignalRChatClient
                 var message = Console.ReadLine();
                 await hubConnection.SendAsync("SendMessage", message);
             }
-        
         }
     }
 }

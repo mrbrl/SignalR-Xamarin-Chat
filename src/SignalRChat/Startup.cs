@@ -50,7 +50,8 @@ namespace SignalRChat
 
             services.AddSingleton<IEmailSender, EmailSender>();
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(Configuration["JwtKey"]));
+            var jwt = Configuration["JwtKey"];
+            var key = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(jwt));
             services.AddAuthentication()
                 .AddJwtBearer(options =>
                 {
