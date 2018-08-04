@@ -5,6 +5,7 @@ using SignalRChat.Mobile.Models;
 using SignalRChat.Mobile.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -12,42 +13,40 @@ using Xamarin.Forms;
 
 namespace SignalRChat.Mobile.ViewModels
 {
-    public class MainPageViewModel : ViewModelBase
+    public class MainPageViewModel : ViewModelBase, INavigationAware, INotifyPropertyChanged
     {
         private string _outgoingText = string.Empty;
 
         public ObservableRangeCollection<Message> Messages { get; }
 
-        public string OutGoingText
-        {
-            get => _outgoingText;
-            set => SetProperty(ref _outgoingText, value);
-        }
+        public string OutGoingText { get; set; }
 
         public DelegateCommand SendMessageCommand => new DelegateCommand(async () => await SendMessage());
         
-        public MainPageViewModel(INavigationService navigationService) 
-            : base (navigationService)
+        public MainPageViewModel() 
         {
-            Title = "Block Chat";
+            Title = "SignalR Chat";
             Messages = new ObservableRangeCollection<Message>();
-
-            OnReceiveMessage = DisplayMessage;
         }
 
         public override async void OnNavigatedTo(NavigationParameters parameters)
         {
-            base.OnNavigatedTo(parameters);
+            base.OnNavigatedFrom(parameters);
+
+            HubConnection.On<string, string>("newMessage", DisplayMessage);
+
+            await HubConnection.StartAsync();
         }
 
         private async Task SendMessage()
-        {
+        {  
             var message = new Message
             {
                 Text = OutGoingText,
                 IsIncoming = false,
                 MessageDateTime = DateTime.Now,
-                Sender = Email
+                Sender = Email,
+                Icon = GravatarHelper.NetStandard.Gravatar.GetGravatarImageUrl(Email)
             };
 
             OutGoingText = string.Empty;
@@ -62,7 +61,8 @@ namespace SignalRChat.Mobile.ViewModels
                 Text = text,
                 IsIncoming = sender != Email,
                 MessageDateTime = DateTime.Now,
-                Sender = sender
+                Sender = sender,
+                Icon = GravatarHelper.NetStandard.Gravatar.GetGravatarImageUrl(sender)
             };
 
             Messages.Add(message);

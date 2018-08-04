@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:customCells="clr-namespace:SignalRChat.Mobile.CustomCells;assembly=SignalRChat.Mobile"
              x:Class="SignalRChat.Mobile.Views.MainPage"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             NavigationPage.HasNavigationBar="false">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -19,9 +20,6 @@
 
             <!--Messages in Row 0 -->
             <ListView 
-                RefreshAllowed="True"
-                RefreshCommand="{Binding RefreshMessagesCommand}" 
-                IsPullToRefreshEnabled="True"
                 x:Name="MessagesListView" 
                 ItemTemplate="{StaticResource MessageTemplateSelector}" 
                 ItemsSource="{Binding Messages}" 

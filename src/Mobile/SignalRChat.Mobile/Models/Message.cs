@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Humanizer;
 using Prism.Mvvm;
@@ -8,39 +9,18 @@ using SignalRChat.Mobile.ViewModels;
 
 namespace SignalRChat.Mobile.Models
 {
-    public class Message : BindableBase
+    public class Message : BindableBase, INotifyPropertyChanged
     {
-        string text;
+        public string Text { get; set; }
 
-        public string Text
-        {
-            get { return text; }
-            set { SetProperty(ref text, value); }
-        }
-
-        DateTime messageDateTime;
-
-        public DateTime MessageDateTime
-        {
-            get { return messageDateTime; }
-            set { SetProperty(ref messageDateTime, value); }
-        }
+        public DateTime MessageDateTime { get; set; }
 
         public string MessageTimeDisplay => MessageDateTime.Humanize();
+        
+        public bool IsIncoming { get; set; }
+        
+        public string Sender { get; set; }
 
-        bool isIncoming;
-
-        public bool IsIncoming
-        {
-            get { return isIncoming; }
-            set { SetProperty(ref isIncoming, value); }
-        }
-
-        string sender;
-        public string Sender
-        {
-            get { return sender; }
-            set { SetProperty(ref sender, value); }
-        }
+        public string Icon { get; set; }
     }
 }

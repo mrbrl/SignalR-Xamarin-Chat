@@ -19,6 +19,9 @@ namespace SignalRChat
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+#if DEBUG
+                .UseUrls("http://0.0.0.0:3528")
+#endif
                 .UseStartup<Startup>()
                 .Build();
     }

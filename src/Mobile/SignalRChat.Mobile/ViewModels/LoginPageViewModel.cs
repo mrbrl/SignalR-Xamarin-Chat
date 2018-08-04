@@ -14,19 +14,23 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 using Prism.Services;
+using SignalRChat.Mobile.Views;
 using Xamarin.Forms;
 
 namespace SignalRChat.Mobile.ViewModels
 {
     public class LoginPageViewModel : ViewModelBase
     {
+        private INavigationService _navigationService;
+
+        public string Username { get; set; }
         public string Password { get; set; }
 
         public DelegateCommand LoginCommand => new DelegateCommand(async () => await Login());
 
-        public LoginPageViewModel(INavigationService navigationService, IPageDialogService pageDialogService) 
-            : base (navigationService)
+        public LoginPageViewModel(INavigationService navigationService) 
         {
+            _navigationService = navigationService;
         }
 
         private async Task Login()
@@ -34,32 +38,27 @@ namespace SignalRChat.Mobile.ViewModels
             try
             {
                 HubConnection = new HubConnectionBuilder()
-                .WithUrl($"{BaseUrl}/chat", options =>
+                .WithUrl($"{Constants.BASE_URL}/chat", options =>
                 {
-                    var stringData = JsonConvert.SerializeObject(new { Email, Password });
+                    var stringData = JsonConvert.SerializeObject(new { Username, Password });
 
                     options.AccessTokenProvider = async () =>
                     {
                         var content = new StringContent(stringData);
                         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                        var response = await HttpClientInstance.PostAsync($"{BaseUrl}/api/token", content);
+                        var response = await HttpClientInstance.PostAsync($"{Constants.BASE_URL}/api/token", content);
                         response.EnsureSuccessStatusCode();
                         return await response.Content.ReadAsStringAsync();
                     };
                 })
                 .Build();
 
-                UpdateConnectionState(ConnectionState.Connected);
+                Email = Username;
 
-                HubConnection.On<string, string>("newMessage", ReceiveMessage);
-
-                await HubConnection.StartAsync();
-
-                UpdateConnectionState(ConnectionState.Connected);
+                await _navigationService.NavigateAsync(nameof(MainPage));
             }
             catch (Exception ex)
             {
-                UpdateConnectionState(ConnectionState.Disconnected);
                 await PageDialogService.DisplayAlertAsync("Connection Error", ex.Message, "OK", null);
             }
         }
