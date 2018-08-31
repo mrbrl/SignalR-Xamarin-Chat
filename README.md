@@ -1,3 +1,1 @@
-# ASP.NET Core SignalR Chat Demo
-
-For magazine article
+# ASP.Net Core SignalR Xamarin Chat
